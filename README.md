@@ -1,21 +1,33 @@
 # pdm-readiness
 
-A `pdm` plugin to check if your project dependencies support new Python versions.
+A `pdm` plugin to check if your project dependencies support specific Python version.
 
 > [!NOTE]  
-> Many packages may still work just fine with newer Python versions, but they are not officially supported by the
-> package maintainers. This plugin only checks the metadata of the packages. Version classifiers are used to determine
-> if package officially supports a Python version.
+> Many packages may still work just fine even when they are not listed as supported.
+> This plugin only checks the metadata provided by the package authors, so it is not
+> a guarantee that the package will work or not.
+
+## Synopsis
+
+The readiness report is divided into 4 sections:
+
+- **Supported dependencies** - currently locked dependencies that support the target Python version.
+- **Update required** - currently locked dependencies that do not support the target Python version, but have newer versions that do.
+- **Unsupported** - dependencies: the most recent version of the dependency does not support the target Python version.
+- **Missing metadata** - the package does not provide metadata about the supported Python versions.
+
+Plugins uses [PyPI JSON API](https://warehouse.pypa.io/api-reference/json.html) to get the metadata.
+It looks at classifiers like `Programming Language :: Python :: 3.12` to determine which versions are supported.
 
 ## Installation
 
-```bash
+```sh
 pdm self add pdm-readiness
 ```
 
 ## Usage
 
-```bash
+```sh
 pdm readiness 3.12
 Supported dependencies (5):
  ✓ whitenoise (2.21)
@@ -34,5 +46,5 @@ Unsupported dependencies (5):
  ✗ pycparser (2.21) supported versions: 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10
 Missing metadata (2):
  ⚠ channels-redis (4.1.0)
- ⚠ pyodbc (5.0.1)
+ ⚠ pyodbc (5.0.1)
 ```
