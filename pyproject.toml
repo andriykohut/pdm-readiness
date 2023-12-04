@@ -38,6 +38,7 @@ dev = [
     "black>=23.11.0",
     "types-requests>=2.31.0.10",
     "pytest>=7.4.3",
+    "responses>=0.24.1",
 ]
 
 [tool.pdm.scripts]

@@ -36,7 +36,7 @@ class ReadinessCommand(BaseCommand):
             console.print("No lockfile found. Please run `pdm lock` first.", style="red")
             sys.exit(1)
         pinned_versions = {d["name"]: d["version"] for d in project.lockfile["package"]}
-        requested_version = Version(options.python_version)
+        requested_version = Version(".".join(options.python_version.split(".")[:2]))
         with console.status("[bold green]Checking dependencies...[/bold green]"):
             with ThreadPoolExecutor() as executor:
                 metadata_to_dep = {
