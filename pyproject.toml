@@ -1,6 +1,6 @@
 [project]
 name = "pdm-readiness"
-version = "0.1.0"
+version = "0.1.1"
 description = "tbd"
 authors = [
     {name = "Andrii Kohut", email = "kogut.andriy@gmail.com"},
@@ -10,6 +10,14 @@ dependencies = [
     "requests",
 ]
 requires-python = ">=3.9.0"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
 readme = "README.md"
 license = {text = "MIT"}
 
