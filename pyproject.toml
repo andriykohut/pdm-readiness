@@ -39,3 +39,7 @@ dev = [
     "types-requests>=2.31.0.10",
     "pytest>=7.4.3",
 ]
+
+[tool.pdm.scripts]
+test = "pytest tests/"
+lint = "pre-commit run --all-files"
