@@ -1,3 +1,4 @@
+import sys
 import re
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -23,20 +24,27 @@ def fetch_metadata(dep: str, pinned_version: str) -> tuple[dict, dict]:
 
 
 class ReadinessCommand(BaseCommand):
-    """Check the readiness of a project for a given Python version."""
+    """Check the readiness of dependencies for a given Python version."""
 
     def add_arguments(self, parser: argparse.ArgumentParser) -> None:
-        parser.add_argument('python_version', help='Python version to check')
+        parser.add_argument("python_version", help="Python version to check")
 
     def handle(self, project: Project, options: argparse.Namespace) -> None:
-        deps = [d.name for d in project.get_dependencies().values()]
-        lockfile = project.lockfile.read()
-        pinned_versions = {d["name"]: d["version"] for d in lockfile["package"]}
         console = Console()
+        deps = [d.name for d in project.get_dependencies().values() if d.name]
+        if not project.lockfile.exists():
+            console.print("No lockfile found. Please run `pdm lock` first.", style="red")
+            sys.exit(1)
+        pinned_versions = {d["name"]: d["version"] for d in project.lockfile["package"]}
         requested_version = Version(options.python_version)
         with console.status("[bold green]Checking dependencies...[/bold green]"):
-            with ThreadPoolExecutor(10) as executor:
-                metadata_to_dep = {executor.submit(fetch_metadata, dep, pinned_versions[dep.lower()]): dep for dep in deps}
+            with ThreadPoolExecutor() as executor:
+                metadata_to_dep = {
+                    executor.submit(
+                        fetch_metadata, dep, pinned_versions[dep.lower()]
+                    ): dep
+                    for dep in deps
+                }
             supported = []
             needs_update = []
             unsupported = []
@@ -45,40 +53,99 @@ class ReadinessCommand(BaseCommand):
                 dep = metadata_to_dep[future]
                 latest, pinned = future.result()
                 supported_versions_for_pinned = sorted(
-                    [Version(c.split("::")[-1].strip()) for c in pinned["info"]["classifiers"] if
-                     re.match(r"Programming Language :: Python :: \d\.\d", c)])
+                    [
+                        Version(c.split("::")[-1].strip())
+                        for c in pinned["info"]["classifiers"]
+                        if re.match(r"Programming Language :: Python :: \d\.\d", c)
+                    ]
+                )
                 supported_versions_for_latest = sorted(
-                    [Version(c.split("::")[-1].strip()) for c in latest["info"]["classifiers"] if
-                     re.match(r"Programming Language :: Python :: \d\.\d", c)])
+                    [
+                        Version(c.split("::")[-1].strip())
+                        for c in latest["info"]["classifiers"]
+                        if re.match(r"Programming Language :: Python :: \d\.\d", c)
+                    ]
+                )
                 latest_version = Version(latest["info"]["version"])
                 pinned_version = Version(pinned["info"]["version"])
                 if requested_version in supported_versions_for_pinned:
-                    supported.append((dep, pinned_version, latest_version, supported_versions_for_pinned))
+                    supported.append(
+                        (
+                            dep,
+                            pinned_version,
+                            latest_version,
+                            supported_versions_for_pinned,
+                        )
+                    )
                 elif requested_version in supported_versions_for_latest:
-                    needs_update.append((dep, pinned_version, latest_version, supported_versions_for_latest))
+                    needs_update.append(
+                        (
+                            dep,
+                            pinned_version,
+                            latest_version,
+                            supported_versions_for_latest,
+                        )
+                    )
                 elif not supported_versions_for_latest:
-                    unknown.append((dep, pinned_version, latest_version, supported_versions_for_latest))
+                    unknown.append(
+                        (
+                            dep,
+                            pinned_version,
+                            latest_version,
+                            supported_versions_for_latest,
+                        )
+                    )
                 else:
-                    unsupported.append((dep, pinned_version, latest_version, supported_versions_for_latest))
+                    unsupported.append(
+                        (
+                            dep,
+                            pinned_version,
+                            latest_version,
+                            supported_versions_for_latest,
+                        )
+                    )
             if supported:
-                console.print(f"[bold]Supported dependencies ({len(supported)}):[/bold]")
+                console.print(
+                    f"[bold]Supported dependencies ({len(supported)}):[/bold]"
+                )
                 for dep, pinned_version, _, supported_versions in supported:
-                    console.print(f" [bold green]✓[/bold green] {dep} ({latest_version})")
+                    console.print(
+                        f" [bold green]✓[/bold green] {dep} ({latest_version})"
+                    )
             if needs_update:
                 console.print(f"[bold]Update required ({len(needs_update)}):[/bold]")
-                for dep, pinned_version, latest_version, supported_versions in needs_update:
+                for (
+                    dep,
+                    pinned_version,
+                    latest_version,
+                    supported_versions,
+                ) in needs_update:
                     console.print(
-                        f" [bold green]⬆[/bold green] {dep} ({pinned_version} -> {latest_version})")
+                        f" [bold green]⬆[/bold green] {dep} ({pinned_version} -> {latest_version})"
+                    )
             if unsupported:
-                console.print(f"[bold]Unsupported dependencies ({len(unsupported)}):[/bold]")
-                for dep, pinned_version, latest_version, supported_versions in unsupported:
+                console.print(
+                    f"[bold]Unsupported dependencies ({len(unsupported)}):[/bold]"
+                )
+                for (
+                    dep,
+                    pinned_version,
+                    latest_version,
+                    supported_versions,
+                ) in unsupported:
                     versions_str = ", ".join([str(v) for v in supported_versions])
                     console.print(
-                        f" [bold red]✗[/bold red] {dep} ({latest_version}) [dim]supported versions: {versions_str}[/dim]")
+                        f" [bold red]✗[/bold red] {dep} ({latest_version}) [dim]supported versions: {versions_str}[/dim]"
+                    )
             if unknown:
                 console.print(f"[bold]Missing metadata ({len(unknown)}):[/bold]")
                 for dep, pinned_version, latest_version, supported_versions in unknown:
-                    console.print(f" [bold yellow]⚠[/bold yellow] {dep} ({latest_version})")
+                    console.print(
+                        f" [bold yellow]⚠[/bold yellow] {dep} ({latest_version})"
+                    )
+
+            if unsupported or unknown:
+                sys.exit(1)
 
 
 def readiness(core: Core) -> None:
