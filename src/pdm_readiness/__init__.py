@@ -104,6 +104,11 @@ class ReadinessCommand(BaseCommand):
                             supported_versions_for_latest,
                         )
                     )
+            supported.sort(key=lambda x: x[0].lower())
+            needs_update.sort(key=lambda x: x[0].lower())
+            unsupported.sort(key=lambda x: x[0].lower())
+            unknown.sort(key=lambda x: x[0].lower())
+
             if supported:
                 console.print(
                     f"[bold]Supported dependencies ({len(supported)}):[/bold]"
