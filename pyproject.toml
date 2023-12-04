@@ -39,8 +39,9 @@ dev = [
     "types-requests>=2.31.0.10",
     "pytest>=7.4.3",
     "responses>=0.24.1",
+    "pytest-cov>=4.1.0",
 ]
 
 [tool.pdm.scripts]
-test = "pytest tests/"
+test = "pytest --cov=src tests/"
 lint = "pre-commit run --all-files"
