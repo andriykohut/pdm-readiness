@@ -1,0 +1,25 @@
+[project]
+name = "pdm-readiness"
+version = "0.1.0"
+description = "tbd"
+authors = [
+    {name = "Andrii Kohut", email = "kogut.andriy@gmail.com"},
+]
+dependencies = [
+    "pdm>=2.9.0",
+    "requests",
+]
+requires-python = ">=3.9.0"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.entry-points.pdm]
+readiness = "pdm_readiness:readiness"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+plugins = ["-e file:///${PROJECT_ROOT}"]
+
