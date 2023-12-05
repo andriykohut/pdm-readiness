@@ -13,9 +13,11 @@ from pdm_readiness import ReadinessCommand
 @pytest.fixture
 def project(tmp_path):
     project = mock.MagicMock(spec=Project)
-    project.get_dependencies.return_value = {
-        "foo": Requirement("foo"),
-        "bar": Requirement("bar"),
+    project.all_dependencies = {
+        "default": {
+            "foo": Requirement("foo"),
+            "bar": Requirement("bar"),
+        }
     }
     project.lockfile.exists.return_value = True
     project.lockfile.__getitem__.side_effect = lambda _: [
