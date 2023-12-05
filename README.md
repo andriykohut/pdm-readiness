@@ -33,4 +33,5 @@ pdm self add pdm-readiness
 Run `pdm readiness <python_version>` in the root of your pdm project.
 
 Example output:
+
 ![image](https://github.com/andriykohut/pdm-readiness/assets/3106616/60b7985f-0cc6-4124-8abe-878690a9d89a)
