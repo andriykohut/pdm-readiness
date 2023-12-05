@@ -18,9 +18,8 @@ jobs:
     - uses: pdm-project/setup-pdm@v3
       with:
           python-version: 3.12
+    - name: Upload to PyPI
+      run: pdm build
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-    - name: Upload to PyPI
-      run: |
-        pdm build
-        pdm publish
+    
