@@ -37,7 +37,9 @@ class ReadinessCommand(BaseCommand):
                 if dep.name:
                     deps.append(dep.name)
         if not project.lockfile.exists():
-            console.print("No lockfile found. Please run `pdm lock` first.", style="red")
+            console.print(
+                "No lockfile found. Please run `pdm lock` first.", style="red"
+            )
             sys.exit(1)
         pinned_versions = {d["name"]: d["version"] for d in project.lockfile["package"]}
         requested_version = Version(".".join(options.python_version.split(".")[:2]))
