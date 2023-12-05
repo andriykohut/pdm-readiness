@@ -31,7 +31,11 @@ class ReadinessCommand(BaseCommand):
 
     def handle(self, project: Project, options: argparse.Namespace) -> None:
         console = Console()
-        deps = [d.name for d in project.get_dependencies().values() if d.name]
+        deps = []
+        for group in project.all_dependencies.values():
+            for dep in group.values():
+                if dep.name:
+                    deps.append(dep.name)
         if not project.lockfile.exists():
             console.print("No lockfile found. Please run `pdm lock` first.", style="red")
             sys.exit(1)
@@ -115,7 +119,7 @@ class ReadinessCommand(BaseCommand):
                 )
                 for dep, pinned_version, _, supported_versions in supported:
                     console.print(
-                        f" [bold green]✓[/bold green] {dep} ({latest_version})"
+                        f" [bold green]✓[/bold green] {dep} ({pinned_version})"
                     )
             if needs_update:
                 console.print(f"[bold]Update required ({len(needs_update)}):[/bold]")
