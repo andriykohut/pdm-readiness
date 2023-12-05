@@ -30,24 +30,7 @@ pdm self add pdm-readiness
 
 ## Usage
 
-```sh
-pdm readiness 3.12
-Supported dependencies (5):
- ✓ whitenoise (2.21)
- ✓ python-dotenv (2.21)
- ✓ django-cors-headers (2.21)
- ✓ celery (2.21)
- ✓ azure-identity (2.21)
-Update required (2):
- ⬆ Django (4.2.7 -> 5.0)
- ⬆ django-filter (23.3 -> 23.4)
-Unsupported dependencies (5):
- ✗ certifi (2023.11.17) supported versions: 3.6, 3.7, 3.8, 3.9, 3.10, 3.11
- ✗ djangorestframework-camel-case (1.4.2) supported versions: 3.6, 3.7, 3.8, 3.9, 3.10
- ✗ requests (2.31.0) supported versions: 3.7, 3.8, 3.9, 3.10, 3.11
- ✗ opentelemetry-api (1.21.0) supported versions: 3.7, 3.8, 3.9, 3.10, 3.11
- ✗ pycparser (2.21) supported versions: 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10
-Missing metadata (2):
- ⚠ channels-redis (4.1.0)
- ⚠ pyodbc (5.0.1)
-```
+Run `pdm readiness <python_version>` in the root of your pdm project.
+
+Example output:
+![image](https://github.com/andriykohut/pdm-readiness/assets/3106616/60b7985f-0cc6-4124-8abe-878690a9d89a)
