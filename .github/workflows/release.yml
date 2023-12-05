@@ -1,0 +1,21 @@
+jobs:
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pdm-readiness
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/checkout@v3
+    - uses: pdm-project/setup-pdm@v3
+      with:
+          python-version: 3.12
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+    - name: Upload to PyPI
+      run: |
+        pdm build
+        pdm publish
