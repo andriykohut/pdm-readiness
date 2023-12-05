@@ -1,5 +1,8 @@
 # pdm-readiness
 
+[![PyPI version](https://badge.fury.io/py/pdm-readiness.svg)](https://pypi.org/project/pdm-readiness/)
+![Github Actions](https://github.com/pdm-project/pdm/workflows/Tests/badge.svg)
+
 A `pdm` plugin to check if your project dependencies support specific Python version.
 
 > [!NOTE]  
