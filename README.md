@@ -19,7 +19,7 @@ The readiness report is divided into 4 sections:
 - **Unsupported dependencies** - the most recent version of the dependency does not support the target Python version.
 - **Missing metadata** - the package does not provide metadata about the supported Python versions.
 
-Plugins uses [PyPI JSON API](https://warehouse.pypa.io/api-reference/json.html) to get the metadata.
+Plugin uses [PyPI JSON API](https://warehouse.pypa.io/api-reference/json.html) to get the metadata.
 It looks at classifiers like `Programming Language :: Python :: 3.12` to determine which versions are supported.
 
 ## Installation
