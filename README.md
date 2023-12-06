@@ -16,7 +16,7 @@ The readiness report is divided into 4 sections:
 
 - **Supported dependencies** - currently locked dependencies that support the target Python version.
 - **Update required** - currently locked dependencies that do not support the target Python version, but have newer versions that do.
-- **Unsupported** - dependencies: the most recent version of the dependency does not support the target Python version.
+- **Unsupported dependencies** - the most recent version of the dependency does not support the target Python version.
 - **Missing metadata** - the package does not provide metadata about the supported Python versions.
 
 Plugins uses [PyPI JSON API](https://warehouse.pypa.io/api-reference/json.html) to get the metadata.
